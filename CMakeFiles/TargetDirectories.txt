@@ -1,0 +1,3 @@
+/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs/CMakeFiles/Assignment3.dir
+/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs/CMakeFiles/edit_cache.dir
+/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.10)
+project(Assignment3)
+find_package(OpenCV REQUIRED)
+add_executable(Assignment3 concurrency.cpp)
+target_link_libraries(Assignment3 ${OpenCV_LIBS})
