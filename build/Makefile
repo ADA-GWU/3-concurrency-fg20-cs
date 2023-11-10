@@ -60,7 +60,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = "/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs"
+CMAKE_BINARY_DIR = "/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs/build"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs/CMakeFiles" "/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs//CMakeFiles/progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs/build/CMakeFiles" "/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs/build//CMakeFiles/progress.marks"
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs/build/CMakeFiles" 0
 .PHONY : all
 
 # The main clean target

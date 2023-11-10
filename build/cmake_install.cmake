@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/fidanguliyeva/Desktop/ADA/Advanced Software Paradigms/Assignment3/3-concurrency-fg20-cs/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
