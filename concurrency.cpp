@@ -5,14 +5,19 @@
 #include <opencv2/highgui.hpp>
 #include <thread>
 #include <vector>
-#include <unistd.h>
-
 using namespace std;
 using namespace cv;
 
 int limit(int x)
 {
   return (x > 255) ? 255 : x;
+}
+
+int findSum(vector<int> vect, int start, int end){
+  int sum = 0;
+  for (int i = start; i < end; i++)
+    sum += vect[i];
+  return  sum;
 }
 
 Vec3b rgbAverage(Mat img, int x, int y, int size_x, int size_y)
@@ -35,8 +40,7 @@ Vec3b rgbAverage(Mat img, int x, int y, int size_x, int size_y)
   return color;
 }
 
-void quantize(Mat img, int col, int row, int size_col, int size_row)
-{
+void quantize(Mat img, int col, int row, int size_col, int size_row){
   Vec3b color;
   color = rgbAverage(img, col, row, size_col, size_row);
   for (int i = row; i < row + size_row; i++)
@@ -48,6 +52,19 @@ void quantize(Mat img, int col, int row, int size_col, int size_row)
   }
 }
 
+void threadQuantize(Mat img, int x, int y, int rows, int size_x, int size_y){
+
+  int fittedCols = img.cols - img.cols % size_x;
+  for (int i = 0; i < rows; i++, y+=size_y)
+  {
+    if (x < (fittedCols))
+      quantize(img, x, y, size_x, size_y);
+    else
+      quantize(img, x, y, img.cols % size_x, size_y);
+  }
+  
+}
+
 void quantizeImageParallel(Mat img, int size){
 
   namedWindow("Image", WINDOW_NORMAL);
@@ -56,76 +73,62 @@ void quantizeImageParallel(Mat img, int size){
     nThreads = 4;
   vector<thread> threads;
 
-  int segmentRow = (img.rows - img.rows % size) / nThreads;
-  int fittedCols = img.cols - img.cols % size;
-  int fittedRows = segmentRow - segmentRow % size;
+  vector<int> SegementRows;
+  SegementRows.resize(nThreads);
+  fill(SegementRows.begin(), SegementRows.end(), 0);
 
-  for (int k = 0; k < segmentRow; k += size)
+  int imgRows = img.rows / size, i = 0;
+  for (; imgRows > 0; i++, imgRows--)
   {
-    for (int x = 0; x < img.cols; x += size)
+    if (i == nThreads)
+      i = 0;
+    SegementRows[i]++;
+  }
+
+  for (int x = 0; x < img.cols; x += size)
+  {
+    
+    for (int t = 0; t < nThreads; t++)
     {
-      int i = 0;
-      for (int y = k; i < nThreads; i++, y = k + i * segmentRow)
-      {
-        if (x < (fittedCols) && k < (fittedRows))
-        {
-          threads.push_back(thread(quantize, img, x, y, size, size));
-        }
-        else if (x >= (fittedCols) && k >= (fittedRows))
-        {
-          threads.push_back(thread(quantize, img, x, y, img.cols % size, segmentRow % size));
-        }
-        else if (x >= (fittedCols) && k < (fittedRows))
-        {
-          threads.push_back(thread(quantize, img, x, y, img.cols % size, size));
-        }
-        else if (x < (fittedCols) && k >= (fittedRows))
-        {
-          threads.push_back(thread(quantize, img, x, y, size, segmentRow % size));
-        }
-      }
-      for (int j = 0; j < nThreads; j++)
-      {
+      if(t==0) threads.push_back(thread(threadQuantize, img, x, 0, SegementRows[t], size, size));
+      else threads.push_back(thread(threadQuantize, img, x, size*findSum(SegementRows, 0, t), SegementRows[t], size, size));
+    }
+      
+    for (int j = 0; j < nThreads; j++)
+    {
         threads[j].join();
-      }
-      for (int j = 0; j < nThreads; j++)
-      {
-        threads.pop_back();
-      }
-      imshow("Image", img);
-      waitKey(10);
-      imwrite("result_parallel.jpg", img);
     }
+      
+    for (int j = 0; j < nThreads; j++)
+    {
+      threads.pop_back();
+    }
+    imshow("Image", img);
+    waitKey(10);
+    imwrite("result.jpg", img);
   }
 
-  int rest = img.rows - segmentRow * nThreads;
-  thread t;
-  if (rest > 0)
-  {
+  int rest = img.rows % size; cout << rest << endl; cout << img.rows << endl;
+  if (rest > 0){
+    thread t;
+    int pos_y = img.rows - rest;
     for (int x = 0; x < img.cols; x += size)
     {
-      if (x < (fittedCols))
-      {
-        t = thread(quantize, img, x, segmentRow * nThreads, size, rest);
-      }
-      else
-      {
-        t = thread(quantize, img, x, segmentRow * nThreads, img.cols % size, rest);
-      }
+      t = thread(threadQuantize, img, x, pos_y, 1, size, rest);
       t.join();
-      imshow("Image", img);
-      waitKey(10);
-      imwrite("result_parallel.jpg", img);
     }
+    imshow("Image", img);
+    waitKey(10);
+    imwrite("result.jpg", img);
   }
+
   imshow("Image", img);
   waitKey(0);
-  imwrite("result_parallel.jpg", img);
+  imwrite("result.jpg", img);
 }
 
 void quantizeImageSequential(Mat img, int size)
 {
-
   int height = img.rows;
   int width = img.cols;
 
@@ -158,7 +161,7 @@ void quantizeImageSequential(Mat img, int size)
   }
   imshow("Image", img);
   waitKey(0);
-  imwrite("result_sequential.jpg", img);
+  imwrite("result.jpg", img);
 }
 
 int main(int argc, char *argv[])
@@ -187,6 +190,8 @@ int main(int argc, char *argv[])
     quantizeImageSequential(img, size);
   if (mode == "M")
     quantizeImageParallel(img, size);
-
+ 
+  destroyAllWindows();
   return 0;
 }
+
