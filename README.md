@@ -64,6 +64,8 @@ To run the application, follow the template below:
 * *size*: size of the kernel for image processing (if set to n, then the size is nxn square)
 * *exec_mode*: single-threaded - 'S'; multi-threaded - 'M'.
 
+__*Note*__: There are sample images in the `build` folder.
+
 To close the image window at the end of the image processing, press any key.
 
 ## How Concurrency was achieved
